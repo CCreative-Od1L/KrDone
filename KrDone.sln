@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.9.34701.34
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KrDone", "KrDone\KrDone.csproj", "{538FD3FA-248C-48C9-A266-A175679076A7}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Core", "Core\Core.csproj", "{298D4531-5F80-462F-90A7-D049DA0A60A1}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{538FD3FA-248C-48C9-A266-A175679076A7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{538FD3FA-248C-48C9-A266-A175679076A7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{538FD3FA-248C-48C9-A266-A175679076A7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{538FD3FA-248C-48C9-A266-A175679076A7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{298D4531-5F80-462F-90A7-D049DA0A60A1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{298D4531-5F80-462F-90A7-D049DA0A60A1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{298D4531-5F80-462F-90A7-D049DA0A60A1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{298D4531-5F80-462F-90A7-D049DA0A60A1}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {D41B526E-02C4-49EA-A093-E5685C3633CA}
+	EndGlobalSection
+EndGlobal
