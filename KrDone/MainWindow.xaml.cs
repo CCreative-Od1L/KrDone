@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using Core.Src.DBFunc;
+using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -16,6 +17,11 @@ namespace KrDone {
     public partial class MainWindow : Window {
         public MainWindow() {
             InitializeComponent();
+
+            CoreInit();
+        }
+        private static void CoreInit() {
+            DbMgr.CreateTable();
         }
     }
 }
