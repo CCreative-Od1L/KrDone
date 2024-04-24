@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Core.Src.DBFunc
 {
-    public class DbTools
+    internal class DbTools
     {
         private readonly string _dbFileName = "Krdb.db";
         public static DbTools Instance { get; private set; } = new();
@@ -20,14 +20,17 @@ namespace Core.Src.DBFunc
         {
             return new SqliteConnection(string.Format("Data Source={0}", _dbFileName));
         }
-
+        /// <summary>
+        /// * 创建表格
+        /// </summary>
+        /// <param name="tableEntry"></param>
         public void CreateTable(DbTableBase tableEntry)
         {
             if (!tableEntry.CheckIsValid()) { return; }
 
             StringBuilder tableColumnsBuilder = new();
-            foreach (var (name, type) in tableEntry.ColumnsName!) {
-                tableColumnsBuilder.AppendFormat("{0} {1},", name, type);
+            foreach (var column in tableEntry.ColumnsName!) {
+                tableColumnsBuilder.AppendFormat("{0},", column.ToString());
             }
             tableColumnsBuilder.Remove(tableColumnsBuilder.Length - 1, 1);
 
@@ -45,23 +48,28 @@ namespace Core.Src.DBFunc
                 _ = command.ExecuteNonQuery();
             }
         }
-        public void InsertDataFromTable(DbTableBase tableEntry, List<string> datas) {
+        /// <summary>
+        /// * 插入数据
+        /// </summary>
+        /// <param name="tableEntry">Table Entry</param>
+        /// <param name="values">VALUES（字符串类型）</param>
+        public void InsertDataFromTable(DbTableBase tableEntry, List<string> values) {
             if (!tableEntry.CheckIsValid()) { return; }
 
             StringBuilder tableColumnsBuilder = new();
-            foreach (var (name, _) in tableEntry.ColumnsName!) {
-                tableColumnsBuilder.AppendFormat("{0},", name);
+            foreach (var column in tableEntry.ColumnsName!) {
+                tableColumnsBuilder.AppendFormat("{0},", column.ColumnName);
             }
             tableColumnsBuilder.Remove(tableColumnsBuilder.Length - 1, 1);
 
             using (_dbConnection = ConnectToDataBase()) {
                 _dbConnection.Open();
 
-                foreach (var data in datas) {
+                foreach (var value in values) {
                     StringBuilder sqlBuilder = new();
                     sqlBuilder.Append("insert into ");
                     sqlBuilder.Append(tableEntry.TableName + " ");
-                    sqlBuilder.Append(string.Format("({0}) values ({1})", tableColumnsBuilder.ToString(), data));
+                    sqlBuilder.Append(string.Format("({0}) values ({1})", tableColumnsBuilder.ToString(), value));
 
                     var command = _dbConnection.CreateCommand();
                     command.CommandText = sqlBuilder.ToString();

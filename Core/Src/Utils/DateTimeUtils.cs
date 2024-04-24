@@ -7,17 +7,39 @@ static public class DateTimeUtils {
         return new DateTime(1970, 1, 1, 0, 0, 0, 0);
     }
     /// <summary>
+    /// * 获取当前的时间戳（秒） - UTC 标准时
+    /// </summary>
+    /// <returns></returns>
+    static public long GetCurrentTimestampSecond() {
+        return Convert.ToInt64(
+            (DateTime.UtcNow - new DateTime(1970, 1, 1, 0, 0, 0, 0)).TotalSeconds
+        );
+    }
+    /// <summary>
+    /// * 获取当前的时间戳（毫秒） - UTC 标准时
+    /// </summary>
+    /// <returns></returns>
+    static public long GetCurrentTimestampMilliSecond() {
+        return Convert.ToInt64(
+            (DateTime.UtcNow - new DateTime(1970, 1, 1, 0, 0, 0, 0)).TotalMilliseconds
+        );
+    }
+    /// <summary>
     /// * 获取当前的时间戳（秒）- UTC 标准时
     /// </summary>
     /// <returns>时间戳字符串</returns>
-    static public string GetCurrentTimestampSecond() {
+    static public string GetCurrentTimestampSecondStr() {
         return Convert.ToString(
             Convert.ToInt64(
                 (DateTime.UtcNow - new DateTime(1970, 1, 1, 0, 0, 0, 0)).TotalSeconds
             )
         );
     }
-    static public string GetCurrentTimestampMilliSecond() {
+    /// <summary>
+    /// * 获取当前的时间戳（毫秒） - UTC 标准时
+    /// </summary>
+    /// <returns></returns>
+    static public string GetCurrentTimestampMilliSecondStr() {
         return Convert.ToString(
             Convert.ToInt64(
                 (DateTime.UtcNow - new DateTime(1970, 1, 1, 0, 0, 0, 0)).TotalMilliseconds
@@ -43,7 +65,7 @@ static public class DateTimeUtils {
     /// <returns>时间戳对应的DateTime结构</returns>
     public static DateTime TimestampToDateTime(string timestampStr) {
         var timestamp = long.Parse(timestampStr);
-        string currentTimestamp = GetCurrentTimestampSecond();
+        string currentTimestamp = GetCurrentTimestampSecondStr();
         if (timestampStr.Length > currentTimestamp.Length) {
             return TimestampToDateTime(timestamp, true);
         } else {

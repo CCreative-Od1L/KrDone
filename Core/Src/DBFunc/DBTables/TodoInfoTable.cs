@@ -9,11 +9,35 @@ namespace Core.Src.DBFunc.DBTables {
     public class TodoInfoTable : DbTableBase {
         public TodoInfoTable() {
             TableName = "TodoInfo";
-            ColumnsName = [
-                (nameof(TodoInfoEntry.TodoDate), SQLiteHelper.SqliteDataType.TEXT),
-                (nameof(TodoInfoEntry.TodoContent), SQLiteHelper.SqliteDataType.TEXT),
-                (nameof(TodoInfoEntry.IsDone), SQLiteHelper.SqliteDataType.INTEGER),
-            ];
+
+            ColumnsName.Add(new SQLiteHelper.DataColumn(
+                nameof(TodoInfoEntry.Id),
+                SQLiteHelper.SqliteDataType.INTEGER,
+                true,
+                true));
+            ColumnsName.Add(new SQLiteHelper.DataColumn(
+                nameof(TodoInfoEntry.TodoDate), 
+                SQLiteHelper.SqliteDataType.TEXT, 
+                false, 
+                true));
+            ColumnsName.Add(new SQLiteHelper.DataColumn(
+                nameof(TodoInfoEntry.IsDone),
+                SQLiteHelper.SqliteDataType.INTEGER,
+                false,
+                true));
+            ColumnsName.Add(new SQLiteHelper.DataColumn(
+                nameof(TodoInfoEntry.TodoContent),
+                SQLiteHelper.SqliteDataType.TEXT,
+                false,
+                false));
+        }
+
+        public void InsertDataIntoTable(List<TodoInfoEntry> dataList) {
+            List<string> strings = [];
+            for(int i = 0; i < dataList.Count; ++i) {
+                strings.Add(dataList[i].ToString());
+            }
+            DbTools.Instance.InsertDataFromTable(this, strings);
         }
     }
 }
