@@ -56,8 +56,9 @@ namespace Core.Src.DBFunc
         /// </summary>
         /// <param name="tableEntry">Table Entry</param>
         /// <param name="values">VALUES（字符串类型）</param>
-        public void InsertDataFromTable(DbTableBase tableEntry, List<string> values) {
+        public void InsertObjectFromTable(DbTableBase tableEntry, List<string> values) {
             if (!tableEntry.CheckIsValid()) { return; }
+            if (values.Count == 0) { return; }
 
             StringBuilder tableColumnsBuilder = new();
             foreach (var column in tableEntry.ColumnsName!) {
@@ -85,8 +86,9 @@ namespace Core.Src.DBFunc
         /// </summary>
         /// <param name="TableEntry"></param>
         /// <param name="primeConditions"></param>
-        public void DeleteDataFromTable(DbTableBase TableEntry, List<string> primeConditions) {
+        public void DeleteObjectFromTable(DbTableBase TableEntry, List<string> primeConditions) {
             if(!TableEntry.CheckIsValid()) { return; }
+            if(primeConditions.Count == 0) { return; }
 
             using (_dbConnection = ConnectToDataBase()) {
                 _dbConnection.Open();
@@ -104,27 +106,33 @@ namespace Core.Src.DBFunc
         /// * 查询表中数据
         /// </summary>
         /// <param name="tableEntry"></param>
-        /// <param name="queryCondSql"></param>
+        /// <param name="queryCondColumn"></param>
         /// <param name="queryCondValue"></param>
         /// <returns></returns>
-        public List<DbEntryBase> QueryObjectFromTable(DbTableBase tableEntry, List<string> queryCondSql, List<object> queryCondValue) {
+        public List<DbEntryBase> QueryObjectFromTable(DbTableBase tableEntry, List<string> queryCondColumn, List<object> queryCondValue) {
             if(!tableEntry.CheckIsValid()) { return []; }
 
             using (_dbConnection = ConnectToDataBase()) {
                 _dbConnection.Open();
                 // * 构建SQL语句
                 StringBuilder sqlBuilder = new();
-                sqlBuilder.Append($"select * from {tableEntry.TableName} where ");
-                
-                for(int i = 0; i < queryCondSql.Count; ++i) {
-                    sqlBuilder.Append($"{queryCondSql[i]} = ${queryCondSql[i]}");
+                sqlBuilder.Append($"select * from {tableEntry.TableName} ");
+                // * 条件语句拼接
+                if(queryCondColumn.Count > 0) {
+                    sqlBuilder.Append("where ");
+                }
+                for(int i = 0; i < queryCondColumn.Count; ++i) {
+                    sqlBuilder.Append($"{queryCondColumn[i]} = ${queryCondColumn[i]} ");
+                    if(i != queryCondValue.Count - 1) {
+                        sqlBuilder.Append("AND ");
+                    }
                 }
 
                 var command = _dbConnection.CreateCommand();
                 command.CommandText = sqlBuilder.ToString();
                 // * 数值填充
                 for(int i = 0; i < queryCondValue.Count; ++i) {
-                    command.Parameters.AddWithValue($"${queryCondSql[i]}", queryCondValue[i]);
+                    command.Parameters.AddWithValue($"${queryCondColumn[i]}", queryCondValue[i]);
                 }
                 // * 获取查询结果
                 List<DbEntryBase> queryResult  = [];
@@ -144,6 +152,55 @@ namespace Core.Src.DBFunc
                 }
                 return queryResult;
             }
+        }
+        /// <summary>
+        /// * 更新表中满足条件的数据项
+        /// </summary>
+        /// <param name="tableEntry"></param>
+        /// <param name="updateColumn"></param>
+        /// <param name="updateValue"></param>
+        /// <param name="queryCondColumn"></param>
+        /// <param name="queryCondValue"></param>
+        public void UpdateObjectFromTable(
+            DbTableBase tableEntry,
+            List<string> queryCondColumn, List<object> queryCondValue,
+            List<string> updateColumn, List<object> updateValue) {
+                if(!tableEntry.CheckIsValid()) { return; }
+
+                using (_dbConnection = ConnectToDataBase()) {
+                    _dbConnection.Open();
+                    // * 构建SQL语句
+                    StringBuilder sqlBuilder = new();
+                    sqlBuilder.Append($"update {tableEntry.TableName} set ");
+                    // * 新值SQL拼接
+                    for(int i = 0; i < updateColumn.Count; ++i) {
+                        sqlBuilder.Append($"{updateColumn[i]} = $new_{updateColumn[i]} ");
+                        if(i != updateColumn.Count - 1) {
+                            sqlBuilder.Append(", ");
+                        }
+                    }
+                    // * 条件语句拼接
+                    if(queryCondColumn.Count > 0) {
+                        sqlBuilder.Append("where ");
+                    }
+                    for(int i = 0; i < queryCondColumn.Count; ++i) {
+                        sqlBuilder.Append($"{queryCondColumn[i]} = ${queryCondColumn[i]} ");
+                        if(i != queryCondValue.Count - 1) {
+                            sqlBuilder.Append("AND ");
+                        }
+                    }
+
+                    var command = _dbConnection.CreateCommand();
+                    command.CommandText = sqlBuilder.ToString();
+                    // * 数值填充
+                    for(int i = 0; i < updateColumn.Count; ++i) {
+                        command.Parameters.AddWithValue($"$new_{updateColumn[i]}", updateValue[i]);
+                    }
+                    for(int i = 0; i < queryCondValue.Count; ++i) {
+                        command.Parameters.AddWithValue($"${queryCondColumn[i]}", queryCondValue[i]);
+                    }
+                    _ = command.ExecuteNonQuery();
+                }
         }
     }
 }

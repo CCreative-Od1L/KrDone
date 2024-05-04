@@ -7,11 +7,12 @@ using System.Threading.Tasks;
 
 namespace Core.Src.DBFunc.DBTables {
     public class TodoInfoTable : DbTableBase {
+        // * 添加元数据项目
+        public override DbEntryBase? DbEntryMeta { get; set; } = new TodoInfoEntry();
         public TodoInfoTable() {
             // * 数据库表名称
             TableName = "TodoInfo";
-            // * 添加元数据项目
-            DbEntryMeta = new TodoInfoEntry();
+
             // * 数据库列添加
             ColumnsName.Add(new SQLiteHelper.DataColumn(
                 nameof(TodoInfoEntry.Id),
@@ -43,7 +44,7 @@ namespace Core.Src.DBFunc.DBTables {
             for(int i = 0; i < dataList.Count; ++i) {
                 entryValues.Add(dataList[i].ToString());
             }
-            DbTools.Instance.InsertDataFromTable(this, entryValues);
+            DbTools.Instance.InsertObjectFromTable(this, entryValues);
         }
         /// <summary>
         /// * 删除数据
@@ -64,14 +65,36 @@ namespace Core.Src.DBFunc.DBTables {
                 entryPrimeConditions.Add(sb.ToString());
                 sb.Clear();
             }
-            DbTools.Instance.DeleteDataFromTable(this, entryPrimeConditions);
+            DbTools.Instance.DeleteObjectFromTable(this, entryPrimeConditions);
         }
-        public List<TodoInfoEntry> QueryDataFromTable(List<string> queryCondSql, List<object> queryCondValue) {
+        /// <summary>
+        /// * 查询数据项
+        /// </summary>
+        /// <param name="queryCondColumn"></param>
+        /// <param name="queryCondValue"></param>
+        /// <returns></returns>
+        public List<TodoInfoEntry> QueryDataFromTable(List<string> queryCondColumn, List<object> queryCondValue) {
+            if(queryCondColumn.Count != queryCondValue.Count) { return []; }
+            
             List<TodoInfoEntry> queryRes = [];
-            foreach(var item in DbTools.Instance.QueryObjectFromTable(this, queryCondSql, queryCondValue)) {
+            foreach(var item in DbTools.Instance.QueryObjectFromTable(this, queryCondColumn, queryCondValue)) {
                 queryRes.Add((TodoInfoEntry)item);
             }
             return queryRes;
+        }
+        /// <summary>
+        /// * 更新数据项
+        /// </summary>
+        /// <param name="updateColumn"></param>
+        /// <param name="updateValue"></param>
+        /// <param name="queryCondColumn"></param>
+        /// <param name="queryCondValue"></param>
+        public void UpdateDataFromTable(
+            List<string> queryCondColumn, List<object> queryCondValue,
+            List<string> updateColumn, List<object> updateValue
+        ) {
+            if(updateColumn.Count != updateValue.Count || queryCondColumn.Count != queryCondValue.Count || queryCondColumn.Count == 0) { return;}
+            DbTools.Instance.UpdateObjectFromTable(this, queryCondColumn, queryCondValue, updateColumn, updateValue);
         }
     }
 }

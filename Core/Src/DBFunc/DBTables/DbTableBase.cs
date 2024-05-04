@@ -6,9 +6,9 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace Core.Src.DBFunc.DBTables {
-    public class DbTableBase {
+    public abstract class DbTableBase {
         public string TableName { get; set; } = string.Empty;
-        public DBEntiries.DbEntryBase? DbEntryMeta { get; set; }
+        public abstract DBEntiries.DbEntryBase? DbEntryMeta { get; set; }
         public List<DataColumn> ColumnsName { get; set; } = [];
         /// <summary>
         /// * 检查当前表格是否有效

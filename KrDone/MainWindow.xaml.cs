@@ -25,12 +25,29 @@ namespace KrDone {
         }
         private static void CoreInit() {
             DbMgr.CreateTable();
-            
+
+            TodoInfoEntry entry1 = new() {
+                Id = DateTimeUtils.GetCurrentTimestampMilliSecond(),
+                TodoDate = DateOnly.FromDateTime(DateTime.Now),
+                IsDone = false,
+                TodoContent = "Hello! This is the first todo item."
+            };
+
+            TodoInfoEntry entry2 = new() {
+                Id = DateTimeUtils.GetCurrentTimestampMilliSecond(),
+                TodoDate = DateOnly.FromDateTime(DateTime.Now),
+                IsDone = true,
+                TodoContent = "Hello! This is the second todo item."
+            };
+
             if(DbMgr.TodoInfo != null) {
                 var result = DbMgr.TodoInfo.QueryDataFromTable(
                         [nameof(TodoInfoEntry.IsDone)], [0]
                     );
-                DbMgr.TodoInfo.DeleteDataFromTable(result);
+
+                DbMgr.TodoInfo.UpdateDataFromTable(
+                    [nameof(TodoInfoEntry.TodoDate)], [DateOnly.FromDateTime(DateTime.Now).ToString()],
+                    [nameof(TodoInfoEntry.IsDone)], [1]);
             }
         }
     }
