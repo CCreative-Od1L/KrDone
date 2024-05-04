@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace Core.Src.DBFunc.DBEntiries {
-    public class TodoInfoEntry {
+    public class TodoInfoEntry : DbEntryBase {
         // * 在Table类内进行属性的装填
         // * 主键 ID -> INTEGER
         // * 当前时间戳
@@ -28,6 +28,26 @@ namespace Core.Src.DBFunc.DBEntiries {
             stringBuilder.Append($"'{TodoContent}'");
 
             return stringBuilder.ToString();
+        }
+        /// <summary>
+        /// * 获取主键数据
+        /// </summary>
+        /// <returns></returns>
+        public List<string> GetPrimeKeyString() {
+            List<string> res = [];
+            res.Add(Id.ToString());
+            return res;
+        }
+
+        public override void PushValues(object[] values)
+        {
+            // * 长度不符合
+            if(values.Length != 4) { return; }
+            
+            Id = (long)values[0];
+            TodoDate = DateOnly.Parse((string)values[1]);
+            IsDone = (long)values[2] == 1;
+            TodoContent = (string)values[3];
         }
     }
 }

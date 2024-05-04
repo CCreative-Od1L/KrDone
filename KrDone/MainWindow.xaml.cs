@@ -1,6 +1,7 @@
 ﻿using Core.Src.DBFunc;
 using Core.Src.DBFunc.DBEntiries;
 using Core.Utils;
+using System.Diagnostics;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
@@ -26,15 +27,10 @@ namespace KrDone {
             DbMgr.CreateTable();
             
             if(DbMgr.TodoInfo != null) {
-                TodoInfoEntry entry = new()
-                {
-                    Id = DateTimeUtils.GetCurrentTimestampMilliSecond(),
-                    TodoDate = DateOnly.FromDateTime(DateTime.Now),
-                    IsDone = false,
-                    TodoContent = "Hello! This is the first todo item."
-                };
-
-                DbMgr.TodoInfo.InsertDataIntoTable([entry]);
+                var result = DbMgr.TodoInfo.QueryDataFromTable(
+                        [nameof(TodoInfoEntry.IsDone)], [0]
+                    );
+                DbMgr.TodoInfo.DeleteDataFromTable(result);
             }
         }
     }
